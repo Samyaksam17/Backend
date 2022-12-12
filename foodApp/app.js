@@ -1,7 +1,13 @@
 const express = require('express')
 const app = express();
+const mongoose= require('mongoose');
+const db_link = require('./secrets');
+// console.log(db_link);
 app.use(express.json());
 
+
+mongoose.set('strictQuery', true);
+// mongoose.connect(process.env.MONGO_URL)
 
 let user = [
  {
@@ -42,6 +48,17 @@ authRouter
     .route("/signup")
     .get(getSignup)
     .post(postSignup)    
+
+
+function middleware1(req,res,next) {
+    console.log("midleware 1 called");
+    next();
+}
+    
+function middleware2(req,res) {
+    console.log("midleware 2 called");
+    res.json({ msg: "user returned" })
+}    
 
 
 // app.get('/user', (req,res) => {
@@ -102,7 +119,9 @@ function getUser(req, res){
     //     return (userObj.name==name && userObj.age==age)
     // })
     // res.send(filteredData);
-    res.send(user);
+    // res.send(user);
+    console.log("get user called");
+    next();
 }
 
 function postUser(req, res){
@@ -161,3 +180,11 @@ function postSignup(req, res) {
 
 
 app.listen(5500);
+
+mongoose.connect(db_link)
+    .then(function (db){
+        console.log(("db connected"));
+    })
+    .catch(function (err){
+        console.log(err);
+    })    
