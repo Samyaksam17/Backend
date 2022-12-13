@@ -112,16 +112,19 @@ function middleware2(req,res) {
 
 
 
-function getUser(req, res){
+async function getUser(req, res){
     console.log(req.query);
     let { name, age } = req.query;
     // let filteredData=user.filter(userObj => {
     //     return (userObj.name==name && userObj.age==age)
     // })
     // res.send(filteredData);
-    // res.send(user);
-    console.log("get user called");
-    next();
+
+    // get alll users from db
+    let allUser=  await userModel.find();
+    res.json({msg:"users retrieved",allUser});
+    // console.log("get user called");
+    // next();
 }
 
 function postUser(req, res){
@@ -161,18 +164,27 @@ function getUserById(req, res){
 
 
 function getSignup(req, res) {
+    
     res.sendFile("/public/index.html", { root: __dirname });
 }
 
-function postSignup(req, res) {
-    let { email, name, password } = req.body;
-    console.log(req.body);
+ async function postSignup(req, res) {
+    // let { email, name, password } = req.body;
+    try{
+    let data = req.body;
+    let users = await userModel.create(data);
+    console.log(data);
     res.json({
         msg: "user signed up",
-        email,
-        name,
-        password
+        users
+        // email,
+        // name,
+        // password
     })
+    }
+    catch (err){
+        console.log(err);
+    }
 }
 
 
@@ -187,4 +199,42 @@ mongoose.connect(db_link)
     })
     .catch(function (err){
         console.log(err);
-    })    
+    })   
+    
+const userSchema= mongoose.Schema({
+    name:{
+        type: String,
+        required: true,
+    },
+    email:{
+        type: String,
+        required: true,
+        unique: true,
+    },
+    password:{
+        type: String,
+        required: true,
+        minLength:7,
+    },
+    confirmPassword:{
+        type: String,
+        required: true,
+        minLength:7,
+    },
+});   
+
+
+// models
+
+const userModel = mongoose.model("userModel", userSchema);
+
+// (async function createUser(){
+//     let user = {
+//         name: 'salksi',
+//         email: "abcde@gmail.com",
+//         password:"12345678",
+//         confirmPassword:"1234568"
+//     };
+//     let data = await userModel.create(user);
+//     console.log(data);
+// })();
