@@ -148,8 +148,13 @@ function updateUser(req, res){
     })
 }
 
-function deleteUser(req, res){
-    user = {};
+async function deleteUser(req, res){
+    // user = {};
+    // let doc= await userModel.deleteOne({email:"abcd@gmail.com"})
+    let doc = await userModel.findOne({ email:"abc@gmail.com" })
+    console.log(doc);
+    let del = await doc.remove();
+    console.log(del);
     res.json({
         msg: "user has been deleted"
     });
