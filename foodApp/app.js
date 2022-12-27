@@ -2,6 +2,9 @@ const express = require('express')
 const app = express();
 const mongoose= require('mongoose');
 const db_link = require('./secrets');
+const userModel = require('./models/userModel')
+
+const emailValidator = require("email-validator");
 // console.log(db_link);
 app.use(express.json());
 
@@ -173,7 +176,7 @@ function getSignup(req, res) {
     res.sendFile("/public/index.html", { root: __dirname });
 }
 
- async function postSignup(req, res) {
+async function postSignup(req, res) {
     // let { email, name, password } = req.body;
     try{
     let data = req.body;
@@ -198,40 +201,14 @@ function getSignup(req, res) {
 
 app.listen(5500);
 
-mongoose.connect(db_link)
-    .then(function (db){
-        console.log(("db connected"));
-    })
-    .catch(function (err){
-        console.log(err);
-    })   
-    
-const userSchema= mongoose.Schema({
-    name:{
-        type: String,
-        required: true,
-    },
-    email:{
-        type: String,
-        required: true,
-        unique: true,
-    },
-    password:{
-        type: String,
-        required: true,
-        minLength:7,
-    },
-    confirmPassword:{
-        type: String,
-        required: true,
-        minLength:7,
-    },
-});   
+  
+
+
 
 
 // models
 
-const userModel = mongoose.model("userModel", userSchema);
+// const userModel = mongoose.model("userModel", userSchema);
 
 // (async function createUser(){
 //     let user = {
